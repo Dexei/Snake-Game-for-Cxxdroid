@@ -1,0 +1,465 @@
+#include <iostream>
+#include <ctime>
+#include <conio.h>
+#include <windows.h>
+#include <stdbool.h>
+#include <cstring>
+#include <unistd.h>
+using namespace std;
+const int wid = 54; //width 
+const int high = 20; //height
+
+//Snake game coded in C++
+//Best experience in Cxxdroid app on Android
+
+bool end = false;
+int x,y,kaonx,kaony,score = 0,tailx[100],taily[100],tail = 0;
+char moves;
+HANDLE h =GetStdHandle(((DWORD)-11)); //Used to customized text output color
+
+void setup(){
+		srand(time(0));
+	system("cls"); //Clear previous output 
+	x = wid / 2;
+	y = high / 2;
+	kaonx= (rand() % wid);
+	kaony= (rand() % high);		
+}
+
+void SCORE(){
+	system("cls");
+	SetConsoleTextAttribute(h,15);	cout<<"===========================================================\n";
+	cout<<"||                                                       ||\n";
+	SetConsoleTextAttribute(h,6);
+	cout<<" SSS N   N     A     K  K EEEE   GGG      A     M   M EEEE"<<endl;
+	cout<<"S    NN  N    A A    K K  E     G        A A    MM MM E"<<endl;
+	cout<<"SSS  N N N   A   A   KK   EEEE  G GGG   AAAAA   M M M EEE"<<endl;
+	cout<<"   S N  NN  AAAAAAA  K K  E     G   G  A     A  M   M E"<<endl;
+	cout<<"SSS  N   N A       A K  K EEEE   GGG  A       A M   M EEEE"<<endl;
+	SetConsoleTextAttribute(h,15);
+	cout<<"||                Thank you for playing!                 ||\n";
+	cout<<"||                                                       ||\n";
+	cout<<"||                    Your Score: "<<score;
+	char num[100];
+	sprintf(num, "%d", score);
+	int size = strlen(num) - 1;     
+	for(int i = 0; i < 22 - size;i++){
+		cout<<" ";
+	}
+	cout<<"||\n";
+		cout<<"||                                                       ||\n";
+			cout<<"||                                                       ||\n";
+	cout<<"===========================================================\n";
+}
+
+void draw(){ //Draw the output for the game
+	system("cls");
+	for(int i = 0; i < wid + 4; i++){
+		cout<<'=';
+	}
+		cout<<endl;
+	for(int i = 0; i < high; i++){
+	for(int j = 0; j < wid; j++){
+		if(j == 0){
+			cout<<"||";
+		}
+		if(i == y && j == x){
+	SetConsoleTextAttribute(h,9);			
+			cout<<'O';
+			SetConsoleTextAttribute(h,15);	
+		}
+		else if( i == kaony && j == kaonx){
+			SetConsoleTextAttribute(h,10);	
+			cout<<'x';
+		}
+		else
+            {
+                bool print = false;
+                for (int k = 0; k < tail; k++)
+                {
+                    if (tailx[k] == j && taily[k] == i)
+                    {
+                    SetConsoleTextAttribute(h,12);
+                        cout << "O";
+                    SetConsoleTextAttribute(h,12);
+                        print = true;
+                    }
+                }
+                if (!print)
+                    cout << " ";
+            }
+		if(j == wid - 1){
+			SetConsoleTextAttribute(h,15);	
+			cout<<"||";
+		}
+	}
+	cout<<endl;
+}
+	for(int i = 0; i < wid + 4; i++){
+		cout<<'=';
+	}
+	cout<<endl;
+}
+
+void logic(){ 
+    int prevX = tailx[0];
+    int prevY = taily[0];
+    int prev2X, prev2Y;
+    tailx[0] = x;
+    taily[0] = y;
+    for (int i = 1; i < tail; i++)
+    {
+        prev2X = tailx[i];
+        prev2Y = taily[i];
+        tailx[i] = prevX;
+        taily[i] = prevY;
+        prevX = prev2X;
+        prevY = prev2Y;
+    }
+	switch(moves){
+		case 'a':
+			x--;
+			break;
+		case 'd':
+			x++;
+			break;
+		case 'w':
+			y--;
+			break;
+		case 's':
+			y++;
+			break;
+	}
+
+	if(x - 1> wid|| x + 1< 0 || y + 1< 0 || y > high){
+	SCORE();
+		exit(0);
+	}
+
+
+	if(x == kaonx && y == kaony){
+			srand(time(0));
+		score++;
+	kaonx= (rand() % wid);
+	kaony= (rand() % high);	
+		tail++;
+	}
+}
+
+void input(){
+	if(kbhit()){
+		char x = getch();
+		switch(x){
+			case 'a':
+			if(tail > 0){
+			if(moves == 'd'){
+				break;
+			}
+			}
+				moves = 'a';
+				break;
+			case 'd':
+			if(tail > 0){
+			if(moves == 'a'){
+				break;
+			}
+			}
+				moves = 'd';
+				break;
+			case 'w':
+			if(tail > 0){
+			if(moves == 's'){
+				break;
+			}
+			}
+				moves = 'w';
+				break;
+			case 's':
+			if(tail > 0){
+			if(moves == 'w'){
+				break;
+			}
+			}
+				moves = 's';
+				break;
+		}
+	}
+}
+
+void c1(){
+
+			cout<<"||                                                       ||\n";
+							   				SetConsoleTextAttribute(h,3); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+				    	{"||                 ||=> ||   PLAY   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+			   				SetConsoleTextAttribute(h,15); 
+	cout<<"||                                                       ||\n";
+}
+
+void c2(){
+
+			cout<<"||                                                       ||\n";
+								   				SetConsoleTextAttribute(h,3); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                 ||=> ||   EXIT   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+						   				SetConsoleTextAttribute(h,15); 
+	cout<<"||                                                       ||\n";
+		cout<<"===========================================================\n";
+}
+
+void c3(){
+
+					   				SetConsoleTextAttribute(h,15); 
+			cout<<"||                                                       ||\n";
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                      ||   EXIT   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+	cout<<"||                                                       ||\n";
+		cout<<"===========================================================\n";
+}
+
+void c4(){
+
+					   				SetConsoleTextAttribute(h,15); 
+			cout<<"||                                                       ||\n";
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                      ||   PLAY   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+	cout<<"||                                                       ||\n";
+}
+
+
+void cEasy(){
+							   				SetConsoleTextAttribute(h,3); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+				    	{"||                 ||=> ||   EASY   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+			   				SetConsoleTextAttribute(h,15); 
+	cout<<"||                                                       ||\n";
+}
+
+void cHard(){
+							   				SetConsoleTextAttribute(h,3); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+				    	{"||                 ||=> ||   HARD   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+			   				SetConsoleTextAttribute(h,15); 
+	cout<<"||                                                       ||\n";
+cout<<"===========================================================\n";
+}
+
+void cMed(){
+								   				SetConsoleTextAttribute(h,3); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                 ||=> ||  MEDIUM  ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+						   				SetConsoleTextAttribute(h,15); 
+	cout<<"||                                                       ||\n";
+}
+
+void nMed(){
+					   				SetConsoleTextAttribute(h,15); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                      ||  MEDIUM  ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+	cout<<"||                                                       ||\n";
+}
+
+
+void nHard(){
+					   				SetConsoleTextAttribute(h,15); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                      ||   HARD   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+	cout<<"||                                                       ||\n";
+		cout<<"===========================================================\n";
+}
+
+void nEasy(){
+					   				SetConsoleTextAttribute(h,15); 
+	string n[3][1] =   {{"||                      ==============                   ||\n"},
+					  	{"||                      ||   EASY   ||                   ||\n"},
+				    	{"||                      ==============                   ||\n"}};	
+	for(int i = 0; i < 3; i++){
+		cout<<n[i][0];
+	}
+	cout<<"||                                                       ||\n";
+}
+
+int main(){
+			bool easy,medium,hard;
+			int s = 0;
+			int move = 'w';
+	while(true){
+	SetConsoleTextAttribute(h,15);
+	cout<<"===========================================================\n";
+	cout<<"||                                                       ||\n";
+	cout<<"||                                                       ||\n";
+	SetConsoleTextAttribute(h,6);
+	cout<<" SSS N   N     A     K  K EEEE   GGG      A     M   M EEEE"<<endl;
+	cout<<"S    NN  N    A A    K K  E     G        A A    MM MM E"<<endl;
+	cout<<"SSS  N N N   A   A   KK   EEEE  G GGG   AAAAA   M M M EEE"<<endl;
+	cout<<"   S N  NN  AAAAAAA  K K  E     G   G  A     A  M   M E"<<endl;
+	cout<<"SSS  N   N A       A K  K EEEE   GGG  A       A M   M EEEE"<<endl;
+	SetConsoleTextAttribute(h,15);
+	cout<<"||              by LORENZ DEXAMIL T. GENITA              ||\n";
+	cout<<"||                                                       ||\n";
+	cout<<"||                                                       ||\n";
+		if(kbhit()){
+			char c = getch();
+		if(c == 's'){
+		 move = c;
+		}
+		else if(c == 'w'){
+		 move = c;
+		}
+		else if(c == '\n'){
+			break;
+		}
+		}
+	if(move == 'w'){
+		c1();
+		SetConsoleTextAttribute(h,15);
+		c3();
+		usleep(100000);
+		system("cls");
+	}
+	else if(move == 's'){
+		SetConsoleTextAttribute(h,15);
+		c4();
+		c2();
+		usleep(100000);
+		system("cls");
+	}
+	}
+	if(move == 's' ){
+		system("cls");
+		return 0;
+	}
+	else
+	move = 'w';
+	while(true){
+	SetConsoleTextAttribute(h,15);
+	cout<<"===========================================================\n";
+	cout<<"||                                                       ||\n";
+	SetConsoleTextAttribute(h,6);
+	cout<<" SSS N   N     A     K  K EEEE   GGG      A     M   M EEEE"<<endl;
+	cout<<"S    NN  N    A A    K K  E     G        A A    MM MM E"<<endl;
+	cout<<"SSS  N N N   A   A   KK   EEEE  G GGG   AAAAA   M M M EEE"<<endl;
+	cout<<"   S N  NN  AAAAAAA  K K  E     G   G  A     A  M   M E"<<endl;
+	cout<<"SSS  N   N A       A K  K EEEE   GGG  A       A M   M EEEE"<<endl;
+	SetConsoleTextAttribute(h,15);
+	cout<<"||                Choose difficulty level:               ||\n";
+	cout<<"||                                                       ||\n";
+		if(kbhit()){
+			char c = getch();
+		if(c == 's'){
+		 s++;
+		 move = c;
+		}
+		else if(c == 'w'){
+		 s--;
+		 move = c;
+		}
+		else if(c == '\n'){
+			break;
+		}
+		}
+	if(move == 'w' && s == 0){
+		cEasy();
+		SetConsoleTextAttribute(h,15);
+		nMed();
+		nHard();
+		usleep(100000);
+		system("cls");
+		easy = true;
+		medium = false;
+		hard = false;
+	}
+	else if((move == 's' && s < 2) || (move == 'w' && s == 1)) {
+		SetConsoleTextAttribute(h,15);
+		nEasy();
+		cMed();
+		nHard();
+		usleep(100000); //Used to Adjust the speed of the output but needed a #include <unistd.h>
+		system("cls");
+		medium = true;
+		easy = false;
+		hard = false;
+	}
+	else if(s > 1){
+		SetConsoleTextAttribute(h,15);
+		nEasy();
+		nMed();
+		cHard();
+		usleep(100000);
+		system("cls");
+		hard = true;
+		easy = false;
+		medium = false;
+	}
+	}
+		setup();
+	while(true){
+	SetConsoleTextAttribute(h,15);
+	logic();
+	input();
+	draw();
+	cout<<"Score: "<<score<<endl;
+	cout<<"Press:\nw to UP\ns to down\na to left\nd to right\n"<<endl;
+	if(hard == true){
+	 	cout<<"Mode: Hard\n";
+	 if(moves == 's' || moves == 'w'){
+		Sleep(60); //Used to Adjust the speed of the output
+	}
+	else
+	Sleep(35); 
+	}
+	else if(easy == true){
+	 	cout<<"Mode: Easy\n";
+	 if(moves == 's' || moves == 'w'){
+		Sleep(300);
+	}
+	else
+	Sleep(200); 
+	}
+	else if (medium == true){
+	cout<<"Mode: Medium\n";
+	if(moves == 's' || moves == 'w'){
+		Sleep(105);
+	}
+	else
+	Sleep(75); 
+	}
+}
+	return 0;
+}
